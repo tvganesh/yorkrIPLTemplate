@@ -1,0 +1,294 @@
+---
+title: "IPL batsmen and bowler template"
+author: "Tinniam V Ganesh"
+date: "March 4, 2017"
+output: html_document
+---
+
+###1 IPL Batsman setup functions
+Get the batsman's details for a batsman
+
+```{r}
+setwd("../BattingBowlingDetails")
+# IPL Team names
+IPLTeamNames <- list("Chennai Super Kings","Deccan Chargers", "Delhi Daredevils","Kings Xi Punjab", 
+                  "Kochi Tuskers Kerala","Kolkata Knight Riders","Mumbai Indians","Pune Warriors",
+                  "Rajasthan Royals","Royal Challengers Bangalore","Sunrisers Hyderabad","Gujarat Lions",
+                  "Rising Pune Supergiants")           
+
+
+# Check and get the team indices of IPL teams in which the batsman has played
+getTeamIndex <- function(batsman){
+    setwd("./BattingBowlingDetails")
+    load("csk.RData")
+    load("dc.RData")
+    load("dd.RData")
+    load("kxip.RData")
+    load("ktk.RData")
+    load("kkr.RData")
+    load("mi.RData")
+    load("pw.RData")
+    load("rr.RData")
+    load("rcb.RData")
+    load("sh.RData")
+    load("gl.RData")
+    load("rps.RData")
+    setwd("..")
+    getwd()
+    print(ls())
+    teams_batsmen = list(csk_batsmen,dc_batsmen,dd_batsmen,kxip_batsmen,ktk_batsmen,kkr_batsmen,mi_batsmen,
+                         pw_batsmen,rr_batsmen,rcb_batsmen,sh_batsmen,gl_batsmen,rps_batsmen)
+    b <- NULL
+    for (i in 1:length(teams_batsmen)){
+        a <- which(teams_batsmen[[i]] == batsman)
+        
+        if(length(a) != 0)
+            b <- c(b,i)
+    }
+    b
+}
+
+# Get the list of the IPL team names from the indices passed
+getTeams <- function(x){
+   
+    l <- NULL
+    # Get the teams passed in as indexes
+    for (i in seq_along(x)){
+        
+        l <- c(l, IPLTeamNames[[x[i]]]) 
+        
+    }
+    l
+}
+
+# Create a consolidated data frame with all teams the IPL batsman has played for
+getIPLBatsmanDF <- function(teamNames){
+    batsmanDF <- NULL
+   # Create a consolidated Data frame of batsman for all IPL teams played
+    for (i in seq_along(teamNames)){
+       df <- getBatsmanDetails(team=teamNames[i],name=IPLBatsman,dir="./BattingBowlingDetails")
+       batsmanDF <- rbind(batsmanDF,df) 
+       
+    }
+    batsmanDF
+}
+
+```
+
+###2. Create a consolidated IPL batsman data frame
+```{r}
+# Since an IPL batsman coculd have played in multiple teams we need to determine these teams and
+# create a consolidated data frame for the analysis
+# For example to check MS Dhoni we need to do the following
+
+IPLBatsman = "MS Dhoni"
+#Check and get the team indices of IPL teams in which the batsman has played
+i <- getTeamIndex(IPLBatsman)
+    
+# Get the team names in which the IPL batsman has played
+teamNames <- getTeams(i)
+    # Check if file exists in the directory. This check is necessary when moving between matchType
+
+
+############## Create a consolidated IPL batsman dataframe for analysis
+batsmanDF <- getIPLBatsmanDF(teamNames)
+
+```
+
+###3. Runs vs deliveries
+```{r}
+# For e.g. batsmanName="MS Dhoni""
+#batsmanRunsVsDeliveries(batsmanDF, "MS Dhoni")
+batsmanRunsVsDeliveries(batsmanDF,"batsmanName")
+```
+
+###4. Batsman 4s & 6s
+```{r}
+batsman46 <- select(batsmanDF,batsman,ballsPlayed,fours,sixes,runs)
+p1 <- batsmanFoursSixes(batsman46,"batsmanName")
+```
+
+###5. Batsman dismissals
+```{r}
+batsmanDismissals(batsmanDF,"batsmanName")
+```
+
+###6. Runs vs Strike rate
+```{r}
+batsmanRunsVsStrikeRate(batsmanDF,"batsmanName")
+```
+
+###7. Batsman Moving Average
+```{r}
+batsmanMovingAverage(batsmanDF,"batsmanName")
+```
+
+
+###8. Batsman cumulative average
+```{r}
+batsmanCumulativeAverageRuns(batsmanDF,"batsmanName")
+```
+
+###9. Batsman cumulative strike rate
+```{r}
+batsmanCumulativeStrikeRate(batsmanDF,"batsmanName")
+```
+
+###10. Batsman runs against oppositions
+```{r}
+batsmanRunsAgainstOpposition(batsmanDF,"batsmanName")
+```
+
+###11. Batsman runs vs venue
+```{r}
+batsmanRunsVenue(batsmanDF,"batsmanName")
+```
+
+###12. Batsman runs predict
+```{r}
+batsmanRunsPredict(batsmanDF,"batsmanName")
+```
+
+#######################################################################
+# Bowler set up functions
+#12
+```{r}
+setwd("../BattingBowlingDetails")
+# IPL Team names
+IPLTeamNames <- list("Chennai Super Kings","Deccan Chargers", "Delhi Daredevils","Kings Xi Punjab", 
+                  "Kochi Tuskers Kerala","Kolkata Knight Riders","Mumbai Indians","Pune Warriors",
+                  "Rajasthan Royals","Royal Challengers Bangalore","Sunrisers Hyderabad","Gujarat Lions",
+                  "Rising Pune Supergiants")    
+
+
+
+# Get the team indices of IPL teams for which the bowler as played
+getTeamIndex_bowler <- function(bowler){
+    # Load IPL Bowlers
+    setwd("./data")
+    load("csk1.RData")
+    load("dc1.RData")
+    load("dd1.RData")
+    load("kxip1.RData")
+    load("ktk1.RData")
+    load("kkr1.RData")
+    load("mi1.RData")
+    load("pw1.RData")
+    load("rr1.RData")
+    load("rcb1.RData")
+    load("sh1.RData")
+    load("gl1.RData")
+    load("rps1.RData")
+    setwd("..")
+    teams_bowlers = list(csk_bowlers,dc_bowlers,dd_bowlers,kxip_bowlers,ktk_bowlers,kkr_bowlers,mi_bowlers,
+                         pw_bowlers,rr_bowlers,rcb_bowlers,sh_bowlers,gl_bowlers,rps_bowlers)
+    b <- NULL
+    for (i in 1:length(teams_bowlers)){
+        a <- which(teams_bowlers[[i]] == bowler)
+        if(length(a) != 0){
+            b <- c(b,i)
+        }
+    }
+    b
+}
+
+
+# Get the list of the IPL team names from the indices passed
+getTeams <- function(x){
+   
+    l <- NULL
+    # Get the teams passed in as indexes
+    for (i in seq_along(x)){
+        
+        l <- c(l, IPLTeamNames[[x[i]]]) 
+        
+    }
+    l
+}
+
+# Get the team names
+teamNames <- getTeams(i)
+
+getIPLBowlerDF <- function(teamNames){
+    bowlerDF <- NULL
+    
+    # Create a consolidated Data frame of batsman for all IPL teams played
+    for (i in seq_along(teamNames)){
+          df <- getBowlerWicketDetails(team=teamNames[i],name=IPLBowler,dir="./BattingBowlingDetails")
+          bowlerDF <- rbind(bowlerDF,df) 
+        
+    }
+    bowlerDF
+}
+```
+
+### 13. Get the consolidated data frame for an IPL bowler
+```{r}
+# Since an IPL bowler could have played in multiple teams we need to determine these teams and
+# create a consolidated data frame for the analysis
+# For example to check R Ashwin we need to do the following
+
+IPLBowler = "R Ashwin"
+#Check and get the team indices of IPL teams in which the batsman has played
+i <- getTeamIndex(IPLBowler)
+    
+# Get the team names in which the IPL batsman has played
+teamNames <- getTeams(i)
+    # Check if file exists in the directory. This check is necessary when moving between matchType
+
+
+############## Create a consolidated IPL batsman dataframe for analysis
+bowlerDF <- getIPLBowlerDF(teamNames)
+
+```
+
+
+###14. Bowler Mean Economy rate
+```{r}
+# For e.g. to get the details of R Ashwin do
+#bowlerMeanEconomyRate(bowlerDF,"R Ashwin")
+bowlerMeanEconomyRate(bowlerDF,"bowlerName")
+```
+
+###15. Bowler mean runs conceded
+```{r}
+bowlerMeanRunsConceded(bowlerDF,"bowlerName")
+```
+
+###16. Bowler Moving Average
+```{r}
+bowlerMovingAverage(bowlerDF,"bowlerName")
+```
+
+###17. Bowler cumulative average wickets
+```{r}
+bowlerCumulativeAvgWickets(bowlerDF,"bowlerName")
+```
+
+###18. Bowler cumulative Economy Rate (ER)
+```{r}
+bowlerCumulativeAvgEconRate(bowlerDF,"bowlerName")
+```
+
+###19. Bowler wicket plot
+```{r}
+bowlerWicketPlot(bowlerDF,"bowlerName")
+```
+
+###20. Bowler wicket against opposition
+```{r}
+bowlerWicketsAgainstOpposition(bowlerDF,"bowlerName")
+```
+
+
+###21. Bowler wicket at cricket grounds
+```{r}
+bowlerWicketsVenue(bowlerDF,"bowlerName")
+```
+
+###22. Predict number of deliveries to wickets
+```{r}
+setwd("./IPLMatches")
+bowlerDF1 <- getDeliveryWickets(team="IPLTeam1",dir=".",name="bowlerName",save=FALSE)
+bowlerWktsPredict(bowlerDF1,"bowlerName")
+```

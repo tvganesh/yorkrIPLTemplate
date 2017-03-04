@@ -1,0 +1,255 @@
+---
+title: "IPL Templates with yorkr"
+author: "Tinniam V Ganesh"
+date: "March 4, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+In this post I create yorkr templates for end-to-end analysis of IPL T20 matches that are available 
+on [Cricsheet](http://cricsheet.org/ ). With these templates you can convert all
+IPL data which is in yaml format to R dataframes. Further I create data and the necessary 
+templates for analyzing IPL matches, teams and players. All of these can be accessed at [yorkrIPLTemplate](https://github.com/tvganesh/yorkrIPLTemplate). The templates are
+
+
+1. Template for conversion and setup - IPLT20Template.Rmd
+1. Any IPL match - IPLMatchtemplate.Rmd
+2. IPL matches between 2 nations - IPLMatches2TeamTemplate.Rmd
+3. A IPL nations performance against all other IPL nations - IPLAllMatchesAllOppnTemplate.Rmd
+4. Analysis of IPL batsmen and bowlers of all IPL nations - IPLBatsmanBowlerTemplate.Rmd
+
+Besides the templates the repository also includes the converted data for all IPL 
+matches I downloaded  from Cricsheet in Dec 2016. So this data is complete till the 2016 IPL season.
+You can recreate the files as more matches are added to Cricsheet site in IPL 2017 and future seasons. 
+This post contains all the steps needed for detailed analysis of IPL matches, teams and IPL player. This will also be my reference in future if I decide to analyze IPL in future!
+
+There will be 5 folders at the root
+
+1. IPLdata - Match files as yaml from Cricsheet
+2. IPLMatches - Yaml match files converted to dataframes
+3. IPLMatchesBetween2Teams - All Matches between any 2 IPL teams
+4. allMatchesAllOpposition - An IPL teams's performance against all other teams
+5. BattingBowlingDetails - Batting and bowling details of all IPL teams
+
+```{r}
+library(yorkr)
+library(dplyr)
+```
+The first few steps take care of the  data setup. This needs
+to be done before any of the analysis of IPL batsmen, bowlers, any IPL match,
+matches between any 2 IPL countries or analysis of a teams performance against all
+other countries
+
+There will be 5 folders at the root
+
+1. data
+2. IPLMatches
+3. IPLMatchesBetween2Teams
+4. allMatchesAllOpposition
+5. BattingBowlingDetails
+
+
+# The source YAML files will be in IPLData folder
+# 1.Create directory of IPLMatches
+Some files may give  conversions errors. You could try to debug the
+problem or just remove it from the IPLdata folder. At most  2-4 file will have 
+conversion problems and I usally remove then from the files to be 
+converted. 
+
+Also take a look at my [GooglyPlus](https://tvganesh.shinyapps.io/googlyPlus/) shiny
+app which was created after performing the same conversion on the Dec 16 data
+.
+
+```{r }
+convertAllYaml2RDataframesT20("data","IPLMatches")
+```
+
+### 2.Save all matches between all combinations of IPL nations
+This function will create the set of all matches between each IPL team
+against every other IPL team. This uses the data that was created in IPLMatches,
+with the convertAllYaml2RDataframesIPL() function.
+```{r}
+setwd("./IPLMatchesBetween2Teams")
+saveAllMatchesBetween2IPLTeams("../IPLMatches")
+```
+
+### 3.Save all matches against all opposition
+This will create a consolidated dataframe of all matches played by every IPL playing
+nation against all other nattions. This also uses the data that was created in IPLMatches,
+with the convertAllYaml2RDataframesIPL() function.
+```{r}
+setwd("../allMatchesAllOpposition")
+saveAllMatchesAllOppositionIPLT20("../IPLMatches")
+```
+
+###4. Create batting and bowling details for each IPL team
+These are the current IPL playing teams. You can add to this vector
+as newer IPL teams start playing IPL. You will get to know all IPL teams
+by also look at the directory created above namely allMatchesAllOpposition.
+This also uses the data that was created in IPLMatches,
+with the convertAllYaml2RDataframesIPL() function.
+```{r}
+setwd("../BattingBowlingDetails")
+ipl_teams <- list("Chennai Super Kings","Deccan Chargers", "Delhi Daredevils","Kings XI Punjab", 
+              "Kochi Tuskers Kerala","Kolkata Knight Riders","Mumbai Indians","Pune Warriors",
+              "Rajasthan Royals","Royal Challengers Bangalore","Sunrisers Hyderabad","Gujarat Lions",
+                 "Rising Pune Supergiants")
+
+for(i in seq_along(ipl_teams)){
+    print(ipl_teams[i])
+    val <- paste(ipl_teams[i],"-details",sep="")
+    val <- getTeamBattingDetails(ipl_teams[i],dir="../IPLMatches", save=TRUE)
+
+}
+
+for(i in seq_along(ipl_teams)){
+    print(ipl_teams[i])
+    val <- paste(ipl_teams[i],"-details",sep="")
+    val <- getTeamBowlingDetails(ipl_teams[i],dir="../IPLMatches", save=TRUE)
+
+}
+```
+
+###5. Get the list of batsmen for a particular IPL team
+The following code is needed for analyzing individual IPL batsmen. In IPL a player could have played in
+multiple IPL teams.
+
+```{r}
+getBatsmen <- function(df){
+    bmen <- df %>% distinct(batsman) 
+    bmen <- as.character(bmen$batsman)
+    batsmen <- sort(bmen)
+}
+load("Chennai Super Kings-BattingDetails.RData")
+csk_details <- battingDetails
+load("Deccan Chargers-BattingDetails.RData")
+dc_details <- battingDetails
+load("Delhi Daredevils-BattingDetails.RData")
+dd_details <- battingDetails
+load("Kings XI Punjab-BattingDetails.RData")
+kxip_details <- battingDetails
+load("Kochi Tuskers Kerala-BattingDetails.RData")
+ktk_details <- battingDetails
+load("Kolkata Knight Riders-BattingDetails.RData")
+kkr_details <- battingDetails
+load("Mumbai Indians-BattingDetails.RData")
+mi_details <- battingDetails
+load("Pune Warriors-BattingDetails.RData")
+pw_details <- battingDetails
+load("Rajasthan Royals-BattingDetails.RData")
+rr_details <- battingDetails
+load("Royal Challengers Bangalore-BattingDetails.RData")
+rcb_details <- battingDetails
+load("Sunrisers Hyderabad-BattingDetails.RData")
+sh_details <- battingDetails
+load("Gujarat Lions-BattingDetails.RData")
+gl_details <- battingDetails
+load("Rising Pune Supergiants-BattingDetails.RData")
+rps_details <- battingDetails
+
+#Get the batsmen for each IPL team
+csk_batsmen <- getBatsmen(csk_details)
+dc_batsmen <- getBatsmen(dc_details)
+dd_batsmen <- getBatsmen(dd_details)
+kxip_batsmen <- getBatsmen(kxip_details)
+ktk_batsmen <- getBatsmen(ktk_details)
+kkr_batsmen <- getBatsmen(kkr_details)
+mi_batsmen <- getBatsmen(mi_details)
+pw_batsmen <- getBatsmen(pw_details)
+rr_batsmen <- getBatsmen(rr_details)
+rcb_batsmen <- getBatsmen(rcb_details)
+sh_batsmen <- getBatsmen(sh_details)
+gl_batsmen <- getBatsmen(gl_details)
+rps_batsmen <- getBatsmen(rps_details)
+
+# Save the dataframes
+save(csk_batsmen,file="csk.RData")
+save(dc_batsmen, file="dc.RData")
+save(dd_batsmen, file="dd.RData")
+save(kxip_batsmen, file="kxip.RData")
+save(ktk_batsmen, file="ktk.RData")
+save(kkr_batsmen, file="kkr.RData")
+save(mi_batsmen , file="mi.RData")
+save(pw_batsmen, file="pw.RData")
+save(rr_batsmen, file="rr.RData")
+save(rcb_batsmen, file="rcb.RData")
+save(sh_batsmen, file="sh.RData")
+save(gl_batsmen, file="gl.RData")
+save(rps_batsmen, file="rps.RData")
+```
+
+###6. Get the list of bowlers for a particular IPL team
+The method below can get the list of bowler names for any IPL team.The following code is needed for analyzing individual IPL bowlers. In IPL a player could have played in multiple IPL teams.
+
+```{r}
+getBowlers <- function(df){
+    bwlr <- df %>% distinct(bowler) 
+    bwlr <- as.character(bwlr$bowler)
+    bowler <- sort(bwlr)
+}
+
+load("Chennai Super Kings-BowlingDetails.RData")
+csk_details <- bowlingDetails
+load("Deccan Chargers-BowlingDetails.RData")
+dc_details <- bowlingDetails
+load("Delhi Daredevils-BowlingDetails.RData")
+dd_details <- bowlingDetails
+load("Kings XI Punjab-BowlingDetails.RData")
+kxip_details <- bowlingDetails
+load("Kochi Tuskers Kerala-BowlingDetails.RData")
+ktk_details <- bowlingDetails
+load("Kolkata Knight Riders-BowlingDetails.RData")
+kkr_details <- bowlingDetails
+load("Mumbai Indians-BowlingDetails.RData")
+mi_details <- bowlingDetails
+load("Pune Warriors-BowlingDetails.RData")
+pw_details <- bowlingDetails
+load("Rajasthan Royals-BowlingDetails.RData")
+rr_details <- bowlingDetails
+load("Royal Challengers Bangalore-BowlingDetails.RData")
+rcb_details <- bowlingDetails
+load("Sunrisers Hyderabad-BowlingDetails.RData")
+sh_details <- bowlingDetails
+load("Gujarat Lions-BowlingDetails.RData")
+gl_details <- bowlingDetails
+load("Rising Pune Supergiants-BowlingDetails.RData")
+rps_details <- bowlingDetails
+
+# Get the bowlers for each team
+csk_bowlers <- getBowlers(csk_details)
+dc_bowlers <- getBowlers(dc_details)
+dd_bowlers <- getBowlers(dd_details)
+kxip_bowlers <- getBowlers(kxip_details)
+ktk_bowlers <- getBowlers(ktk_details)
+kkr_bowlers <- getBowlers(kkr_details)
+mi_bowlers <- getBowlers(mi_details)
+pw_bowlers <- getBowlers(pw_details)
+rr_bowlers <- getBowlers(rr_details)
+rcb_bowlers <- getBowlers(rcb_details)
+sh_bowlers <- getBowlers(sh_details)
+gl_bowlers <- getBowlers(gl_details)
+rps_bowlers <- getBowlers(rps_details)
+
+#Save the dataframes
+save(csk_bowlers,file="csk1.RData")
+save(dc_bowlers, file="dc1.RData")
+save(dd_bowlers, file="dd1.RData")
+save(kxip_bowlers, file="kxip1.RData")
+save(ktk_bowlers, file="ktk1.RData")
+save(kkr_bowlers, file="kkr1.RData")
+save(mi_bowlers , file="mi1.RData")
+save(pw_bowlers, file="pw1.RData")
+save(rr_bowlers, file="rr1.RData")
+save(rcb_bowlers, file="rcb1.RData")
+save(sh_bowlers, file="sh1.RData")
+save(gl_bowlers, file="gl1.RData")
+save(rps_bowlers, file="rps1.RData")
+```
+
+### Now we are all set
+

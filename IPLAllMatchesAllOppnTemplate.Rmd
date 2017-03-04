@@ -1,0 +1,98 @@
+---
+title: "IPL team matches against all opposition"
+author: "Tinniam V Ganesh"
+date: "March 4, 2017"
+output: html_document
+---
+
+###1. IPL Matches for a team against all other teams 
+Load  the data between for a IPL team against all other countries ./allMatchesAllOpposition for 
+e.g all matches of Kolkata Knight Riders
+```{r}
+load("allMatchesAllOpposition-Kolkata Knight Riders.RData")
+kkr_matches <- matches
+IPLTeam="IPLTeam1"
+allMatches <- paste("allMatchesAllOposition-",IPLTeam,".RData",sep="")
+load(allMatches)
+IPLTeam1AllMatches <- matches
+
+```
+
+###2. Team's batting scorecard all Matches
+```{r}
+m <-teamBattingScorecardAllOppnAllMatches(IPLTeam1AllMatches,theTeam="IPLTeam1")
+m
+```
+
+###3. Batting scorecard of opposing team
+```{r}
+m <-teamBattingScorecardAllOppnAllMatches(matches=IPLTeam1AllMatches,theTeam="IPLTeam2")
+```
+
+###4. Team batting partnerships
+```{r}
+m <- teamBatsmenPartnershipAllOppnAllMatches(IPLTeam1AllMatches,theTeam="IPLTeam1")
+m
+m <- teamBatsmenPartnershipAllOppnAllMatches(IPLTeam1AllMatches,theTeam='IPLTeam1',report="detailed")
+head(m,30)
+m <- teamBatsmenPartnershipAllOppnAllMatches(IPLTeam1AllMatches,theTeam='IPLTeam1',report="summary")
+m
+```
+
+###5. Team batting partnerships plot
+```{r}
+teamBatsmenPartnershipAllOppnAllMatchesPlot(IPLTeam1AllMatches,"IPLTeam1",main="IPLTeam1")
+teamBatsmenPartnershipAllOppnAllMatchesPlot(IPLTeam1AllMatches,"IPLTeam1",main="IPLTeam2")
+```
+
+###6, Team batsmen vs bowlers report
+```{r}
+m <-teamBatsmenVsBowlersAllOppnAllMatchesRept(IPLTeam1AllMatches,"IPLTeam1",rank=0)
+m
+m <-teamBatsmenVsBowlersAllOppnAllMatchesRept(IPLTeam1AllMatches,"IPLTeam1",rank=1,dispRows=30)
+m
+m <-teamBatsmenVsBowlersAllOppnAllMatchesRept(matches=IPLTeam1AllMatches,theTeam="IPLTeam2",rank=1,dispRows=25)
+m
+```
+
+###7. Team batsmen vs bowler plot
+```{r}
+d <- teamBatsmenVsBowlersAllOppnAllMatchesRept(IPLTeam1AllMatches,"IPLTeam1",rank=1,dispRows=50)
+d
+teamBatsmenVsBowlersAllOppnAllMatchesPlot(d)
+d <- teamBatsmenVsBowlersAllOppnAllMatchesRept(IPLTeam1AllMatches,"IPLTeam1",rank=2,dispRows=50)
+teamBatsmenVsBowlersAllOppnAllMatchesPlot(d)
+```
+
+###8. Team bowling scorecard
+```{r}
+teamBowlingScorecardAllOppnAllMatchesMain(matches=IPLTeam1AllMatches,theTeam="IPLTeam1")
+teamBowlingScorecardAllOppnAllMatches(IPLTeam1AllMatches,'IPLTeam2')
+```
+
+###9. Team bowler vs batsmen
+```{r}
+teamBowlersVsBatsmenAllOppnAllMatchesMain(IPLTeam1AllMatches,theTeam="IPLTeam1",rank=0)
+teamBowlersVsBatsmenAllOppnAllMatchesMain(IPLTeam1AllMatches,theTeam="IPLTeam1",rank=2)
+teamBowlersVsBatsmenAllOppnAllMatchesRept(matches=IPLTeam1AllMatches,theTeam="IPLTeam1",rank=0)
+```
+
+###10. Team Bowler vs bastmen
+```{r}
+df <- teamBowlersVsBatsmenAllOppnAllMatchesRept(IPLTeam1AllMatches,theTeam="IPLTeam1",rank=1)
+teamBowlersVsBatsmenAllOppnAllMatchesPlot(df,"IPLTeam1","IPLTeam1")
+```
+
+###11. Team bowler wicket kind
+```{r}
+teamBowlingWicketKindAllOppnAllMatches(IPLTeam1AllMatches,t1="IPLTeam1",t2="All")
+teamBowlingWicketKindAllOppnAllMatches(IPLTeam1AllMatches,t1="IPLTeam1",t2="IPLTeam2")
+
+```
+
+###12. 
+```{r}
+teamBowlingWicketRunsAllOppnAllMatches(IPLTeam1AllMatches,t1="IPLTeam1",t2="All",plot=TRUE)
+teamBowlingWicketRunsAllOppnAllMatches(IPLTeam1AllMatches,t1="IPLTeam1",t2="IPLTeam2",plot=TRUE)
+```
+

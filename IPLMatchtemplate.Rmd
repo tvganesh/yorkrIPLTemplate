@@ -1,0 +1,76 @@
+---
+title: "IPL Match Template"
+author: "Tinniam V Ganesh"
+date: "February 25, 2017"
+output: html_document
+---
+
+
+###1 IPL Match Analysis
+Load any match data from the ./IPLMatches folder for e.g. Chennai Super Kings-Deccan Chargers-2008-05-06.RData
+
+```{r}
+setwd("./IPLMatches")
+load("Chennai Super Kings-Deccan Chargers-2008-05-06.RData")
+csk_dc<- overs
+#The steps are
+load("IPLTeam1-IPLTeam2-Date.Rdata")
+IPLTeam1_IPLTeam2 <- overs
+```
+
+
+All analysis for this match can be done now
+###2. Scorecard
+```{r}
+teamBattingScorecardMatch(IPLTeam1_IPLTeam2,"IPLTeam1")
+teamBattingScorecardMatch(IPLTeam1_IPLTeam2,"IPLTeam2")
+```
+
+###3.Batting Partnerships
+```{r}
+teamBatsmenPartnershipMatch(IPLTeam1_IPLTeam2,"IPLTeam1","IPLTeam2")
+teamBatsmenPartnershipMatch(IPLTeam1_IPLTeam2,"IPLTeam2","IPLTeam1")
+```
+
+###4. Batsmen vs Bowler Plot
+```{r}
+teamBatsmenVsBowlersMatch(IPLTeam1_IPLTeam2,"IPLTeam1","IPLTeam2",plot=TRUE)
+teamBatsmenVsBowlersMatch(IPLTeam1_IPLTeam2,"IPLTeam1","IPLTeam2",plot=FALSE)
+```
+
+###5. Team bowling scorecard
+```{r}
+teamBowlingScorecardMatch(IPLTeam1_IPLTeam2,"IPLTeam1")
+teamBowlingScorecardMatch(IPLTeam1_IPLTeam2,"IPLTeam2")
+```
+
+###6. Team bowling Wicket kind match
+```{r}
+teamBowlingWicketKindMatch(IPLTeam1_IPLTeam2,"IPLTeam1","IPLTeam2")
+m <-teamBowlingWicketKindMatch(IPLTeam1_IPLTeam2,"IPLTeam1","IPLTeam2",plot=FALSE)
+m
+```
+###7. Team Bowling Wicket Runs Match
+```{r}
+teamBowlingWicketRunsMatch(IPLTeam1_IPLTeam2,"IPLTeam1","IPLTeam2")
+m <-teamBowlingWicketRunsMatch(IPLTeam1_IPLTeam2,"IPLTeam1","IPLTeam2",plot=FALSE)
+m
+```
+
+###8. Team Bowling Wicket Match
+```{r}
+m <-teamBowlingWicketMatch(IPLTeam1_IPLTeam2,"IPLTeam1","IPLTeam2",plot=FALSE)
+m
+teamBowlingWicketMatch(IPLTeam1_IPLTeam2,"IPLTeam1","IPLTeam2")
+```
+###9. Team Bowler vs Batsmen
+```{r}
+teamBowlersVsBatsmenMatch(IPLTeam1_IPLTeam2,"IPLTeam1","IPLTeam2")
+m <- teamBowlersVsBatsmenMatch(IPLTeam1_IPLTeam2,"IPLTeam1","IPLTeam2",plot=FALSE)
+m
+```
+###10. Match Worm chart
+```{r}
+matchWormGraph(IPLTeam1_IPLTeam2,"IPLTeam1","IPLTeam2")
+```
+
